@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "loot-arena",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "http-server", "C:/Users/Nurbek/Downloads/files_extracted/yandex_zip", "-c-1"],
+      "port": 8123,
+      "autoPort": true
+    },
+    {
+      "name": "jarvis-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}

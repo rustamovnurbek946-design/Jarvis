@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-07-08T20:15:00+05:00",
+  "overallPercent": 18,
+  "summary": "Sprint 1 (ekran dizaynlari) va Sprint 2 (MVP) haqiqiy kod holatiga moslab qayta baholandi: Neon+Drizzle baza, Maqsadlar (/) sahifasining real bazaga ulanishi va dizayn tokenlari/komponentlari tasdiqlandi; Vazifalar/AI/Kun sahifalari hali mock ekani va Auth.js login hali ulanmagani aniqlandi.",
+  "sprintStatuses": {
+    "1": "progress (21%)",
+    "2": "progress (31%)",
+    "3": "partial (12%)",
+    "4": "todo (0%)"
+  }
+}
