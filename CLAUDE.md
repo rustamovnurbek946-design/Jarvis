@@ -27,7 +27,9 @@ tomonlama sinxron, to'liq interaktiv Telegram bot.
 
 - Next.js 16 (App Router, TS) · Tailwind + shadcn/ui · dark/light
 - Drizzle ORM + **Neon** Postgres (Vercel Postgres endi yo'q)
-- Auth.js (NextAuth v5) — Google OAuth (login + Calendar scope)
+- Auth.js (NextAuth v5) — **Telegram** (Credentials, bir martalik deep-link
+  login-token) asosiy kirish usuli; Google OAuth endi faqat Calendar ulash
+  uchun ixtiyoriy qadam (login uchun emas)
 - Vercel AI SDK + `@ai-sdk/google` (**Gemini**), structured output = Zod
 - **grammY** (Telegram, webhook rejimi)
 - **next-intl** (i18n, cookie `NEXT_LOCALE`, URL-prefixsiz)
@@ -52,10 +54,12 @@ tomonlama sinxron, to'liq interaktiv Telegram bot.
 
 ## Muhit o'zgaruvchilari (.env.local / Vercel)
 
-`DATABASE_URL`, `AUTH_SECRET`, `AUTH_URL`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`,
-`ALLOWED_EMAILS`, `GEMINI_API_KEY` (+ ixtiyoriy `GEMINI_MODEL`),
-`TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `CRON_SECRET`,
-`NEXT_PUBLIC_APP_URL`. Namuna: `.env.example`.
+`DATABASE_URL`, `AUTH_SECRET`, `AUTH_URL`, `GEMINI_API_KEY` (+ ixtiyoriy
+`GEMINI_MODEL`), `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`,
+`NEXT_PUBLIC_TELEGRAM_BOT_USERNAME`, `ALLOWED_TELEGRAM_USERNAMES`,
+`CRON_SECRET`, `NEXT_PUBLIC_APP_URL`. Ixtiyoriy (faqat Google Calendar ulash
+uchun): `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `ALLOWED_EMAILS`. Namuna:
+`.env.example`.
 
 ## Ish jarayoni (sprintlar va hisobot)
 
@@ -102,3 +106,28 @@ tomonlama sinxron, to'liq interaktiv Telegram bot.
 - [2026-07-08] Auth.js login UI hali ulanmagani sababli sahifalar vaqtinchalik
   `lib/db/demo-user.ts` (`getDemoUserId`) orqali bitta seed qilingan demo
   foydalanuvchi nomidan ishlaydi; real sessiya Sprint 2 davomida almashtiriladi.
+- [2026-07-15] Asosiy kirish usuli Google emas, **Telegram** bo'ldi (bir
+  martalik deep-link login-token: `/login` → bot ochiladi → tasdiqlash →
+  avtomatik `signIn`) — Google hisob talab qilmasdan, ota-Nurbek ikkalasi
+  uchun ham Telegram orqali tezroq va sodda kirish uchun. Google OAuth endi
+  faqat Calendar ulash uchun ixtiyoriy qadam bo'lib qoladi.
+- [2026-07-15] Auth.js sessiya strategiyasi `"database"` dan `"jwt"` ga
+  o'zgartirildi — Credentials provider (Telegram login) bilan Auth.js
+  `"database"` sessiyasini qo'llab-quvvatlamaydi (freymvork cheklovi); Google
+  Calendar tokenlari sessiyaga emas, `accounts` jadvaliga bog'liq bo'lgani
+  uchun bu o'zgarish Calendar integratsiyasiga ta'sir qilmaydi.
+- [2026-07-15] Himoyalangan sahifalar uchun Next.js middleware **ataylab**
+  ishlatilmadi; buning o'rniga `app/(app)/layout.tsx` Server Component'da
+  `auth()` tekshiruvi qo'yildi — rasmiy Vercel/Next.js tavsiyasiga ko'ra
+  (CVE-2025-29927) middleware auth uchun yagona himoya qatlami bo'lmasligi
+  kerak.
+- [2026-07-15] Foydalanuvchi bilim bazasi va agent instruksiyalari oddiy matn
+  (`users.knowledgeBase`, `users.agentInstructions`) sifatida saqlanadi va
+  to'g'ridan-to'g'ri Gemini system promptiga qo'shiladi — RAG/embeddings
+  ishlatilmadi, chunki hajm kichik (foydalanuvchi boshqaradigan qo'lda
+  matn, MAX 8000 belgi) va oddiy yechim yetarli.
+- [2026-07-15] Telegram bot'da erkin matnning ma'nosi o'zgardi: endi u
+  to'g'ridan-to'g'ri kundalikka yozilmaydi, balki Gemini AI chat'ga
+  (`lib/ai/chat.ts`) yuboriladi; kundalik yozish uchun alohida `/kun <matn>`
+  buyrug'i qo'shildi — erkin savol-javob va kundalik yozishni bir-biridan
+  aniq ajratish uchun.

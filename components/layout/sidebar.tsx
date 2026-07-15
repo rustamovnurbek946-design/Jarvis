@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Flag, Target, CheckSquare, Sparkles, BarChart3 } from "lucide-react";
+import { signOut } from "next-auth/react";
+import { Flag, Target, CheckSquare, Sparkles, BarChart3, BookOpen, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -10,10 +11,17 @@ const NAV_ITEMS = [
   { href: "/tasks", icon: CheckSquare, label: "Vazifalar" },
   { href: "/ai", icon: Sparkles, label: "AI xulosasi" },
   { href: "/day", icon: BarChart3, label: "Kun tahlili" },
+  { href: "/knowledge", icon: BookOpen, label: "Bilim bazasi" },
 ] as const;
 
-export function Sidebar() {
+interface SidebarProps {
+  userName: string;
+  userEmail: string | null;
+}
+
+export function Sidebar({ userName, userEmail }: SidebarProps) {
   const pathname = usePathname();
+  const initial = userName.trim().charAt(0).toUpperCase() || "?";
 
   return (
     <div className="flex w-60 shrink-0 flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)]">
@@ -54,13 +62,26 @@ export function Sidebar() {
       {/* User */}
       <div className="border-t border-[var(--color-border-light)] px-5 py-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex size-[34px] items-center justify-center rounded-full bg-[var(--color-primary-muted)] text-[13px] font-semibold text-[var(--color-primary)]">
-            A
+          <div className="flex size-[34px] shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-muted)] text-[13px] font-semibold text-[var(--color-primary)]">
+            {initial}
           </div>
-          <div>
-            <div className="text-[13px] font-medium text-[var(--color-text)]">Aziz</div>
-            <div className="text-[11px] text-[var(--color-text-muted)]">aziz@maqsadlarim.uz</div>
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-[13px] font-medium text-[var(--color-text)]">
+              {userName}
+            </div>
+            {userEmail && (
+              <div className="truncate text-[11px] text-[var(--color-text-muted)]">
+                {userEmail}
+              </div>
+            )}
           </div>
+          <button
+            onClick={() => signOut({ redirectTo: "/login" })}
+            aria-label="Chiqish"
+            className="flex shrink-0 rounded-md p-1.5 text-[var(--color-text-muted)] hover:bg-[var(--color-bg)]"
+          >
+            <LogOut size={16} />
+          </button>
         </div>
       </div>
     </div>

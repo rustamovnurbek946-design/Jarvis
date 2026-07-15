@@ -39,8 +39,26 @@ export const users = pgTable("user", {
   locale: localeEnum("locale").notNull().default("uz"),
   timezone: text("timezone").notNull().default("Asia/Tashkent"),
   telegramChatId: text("telegram_chat_id"),
-  telegramLinkCode: text("telegram_link_code"),
+  telegramUsername: text("telegram_username"),
+  // Per-user AI chat context (see lib/ai/chat.ts) — plain text, injected
+  // directly into the Gemini system prompt. No RAG/embeddings by design.
+  knowledgeBase: text("knowledge_base"),
+  agentInstructions: text("agent_instructions"),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+});
+
+// One-time deep-link login handshake: web app creates a row, the Telegram
+// bot approves it once the user taps "Start" in their bot chat, then the
+// Credentials provider in auth.ts consumes it exactly once (see
+// lib/actions/telegram-auth.ts).
+export const telegramLoginTokens = pgTable("telegram_login_tokens", {
+  token: text("token").primaryKey(),
+  approvedUserId: text("approved_user_id").references(() => users.id, {
+    onDelete: "cascade",
+  }),
+  consumedAt: timestamp("consumed_at", { mode: "date" }),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
 });
 
 export const accounts = pgTable(
@@ -204,6 +222,7 @@ export type DailyAnalysis = {
 };
 
 export type User = typeof users.$inferSelect;
+export type TelegramLoginToken = typeof telegramLoginTokens.$inferSelect;
 export type Goal = typeof goals.$inferSelect;
 export type NewGoal = typeof goals.$inferInsert;
 export type Task = typeof tasks.$inferSelect;

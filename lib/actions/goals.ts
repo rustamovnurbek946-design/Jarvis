@@ -3,7 +3,13 @@
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db, goals } from "@/lib/db";
-import { getDemoUserId } from "@/lib/db/demo-user";
+import { auth } from "@/auth";
+
+async function requireUserId(): Promise<string> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Kirish talab qilinadi");
+  return session.user.id;
+}
 
 export type GoalStatus = "active" | "done";
 
@@ -25,7 +31,7 @@ export interface GoalFormValues {
 }
 
 export async function createGoalAction(values: GoalFormValues) {
-  const userId = await getDemoUserId();
+  const userId = await requireUserId();
   await db.insert(goals).values({
     userId,
     title: values.title,
@@ -40,7 +46,7 @@ export async function createGoalAction(values: GoalFormValues) {
 }
 
 export async function updateGoalAction(id: string, values: GoalFormValues) {
-  const userId = await getDemoUserId();
+  const userId = await requireUserId();
   await db
     .update(goals)
     .set({
@@ -55,7 +61,7 @@ export async function updateGoalAction(id: string, values: GoalFormValues) {
 }
 
 export async function deleteGoalAction(id: string) {
-  const userId = await getDemoUserId();
+  const userId = await requireUserId();
   await db.delete(goals).where(and(eq(goals.id, id), eq(goals.userId, userId)));
   revalidatePath("/");
 }

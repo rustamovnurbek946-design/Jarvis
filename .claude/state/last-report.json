@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-07-08T20:15:00+05:00",
-  "overallPercent": 18,
-  "summary": "Sprint 1 (ekran dizaynlari) va Sprint 2 (MVP) haqiqiy kod holatiga moslab qayta baholandi: Neon+Drizzle baza, Maqsadlar (/) sahifasining real bazaga ulanishi va dizayn tokenlari/komponentlari tasdiqlandi; Vazifalar/AI/Kun sahifalari hali mock ekani va Auth.js login hali ulanmagani aniqlandi.",
+  "timestamp": "2026-07-15T18:00:00+05:00",
+  "overallPercent": 27,
+  "summary": "Sprint 2 va Sprint 3 haqiqiy kod holatiga moslab qayta baholandi: Telegram endi asosiy login usuli (Credentials provider, JWT sessiya, deep-link login-token, himoyalangan layout, demo-user olib tashlandi), Bilim bazasi sahifasi va Telegram AI chat (Gemini) qo'shildi, bot.ts /kun buyrug'i bilan qayta yozildi.",
   "sprintStatuses": {
-    "1": "progress (21%)",
-    "2": "progress (31%)",
-    "3": "partial (12%)",
+    "1": "progress (25%)",
+    "2": "progress (46%)",
+    "3": "progress (31%)",
     "4": "todo (0%)"
   }
 }

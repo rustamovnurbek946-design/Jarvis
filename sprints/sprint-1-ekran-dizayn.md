@@ -17,16 +17,16 @@ belgilangan. Sprint 2 shu dizayn asosida kod yozadi.
 - [x] **Tipografiya:** sarlavha/matn shriftlari, o'lchamlar shkalasi (h1–h4, body, caption) — `app/tokens/typography.css`, Inter shrifti `next/font` orqali ulangan
 - [x] **Bo'shliq (spacing) tizimi:** 4/8px shkala, radius, soyalar (shadow) — `app/tokens/spacing.css`
 - [x] **Ikonkalar to'plami:** `lucide-react` (real npm paket, `package.json`da) — ulangan va sahifalarda ishlatilmoqda
-- [~] **Komponent inventari:** Button, Card, Input, Progress bar, Status tag yaratildi (`components/ui/`) — Textarea, Select, Dialog/Modal (alohida generik), Badge, Switch, Tabs, Checkbox, Avatar, Toast hali yo'q
+- [~] **Komponent inventari:** Button, Card, Input, Progress bar, Status tag, Textarea yaratildi (`components/ui/`) — Select, Dialog/Modal (alohida generik), Badge, Switch, Tabs, Checkbox, Avatar, Toast hali yo'q
 - [ ] **Holat (state) dizaynlari:** bo'sh holat (empty), yuklanish (loading/skeleton), xato (error) — hech biri loyihada topilmadi
 - [ ] **Til almashtirgich (language switcher)** ko'rinishi (uz/ru/en) — UI'da yo'q
 - [ ] **Dark/Light toggle** ko'rinishi va joylashuvi — UI'da yo'q, tema almashtirish mexanizmi ulanmagan
 
 ## 1.2 Navigatsiya va layout
 
-- [x] **Desktop:** chap tomonda sidebar — real `components/layout/sidebar.tsx` (Link + `usePathname`), 4 bo'lim: Maqsadlar, Vazifalar, AI xulosasi, Kun tahlili
+- [x] **Desktop:** chap tomonda sidebar — real `components/layout/sidebar.tsx` (Link + `usePathname`), 5 bo'lim: Maqsadlar, Vazifalar, AI xulosasi, Kun tahlili, Bilim bazasi; endi haqiqiy foydalanuvchi ismi/emaili va chiqish (sign out) tugmasi bilan
 - [ ] **Mobil:** pastki navigatsiya (bottom tab bar) yoki hamburger menyu — topilmadi, responsive/mobil variant hali ishlanmagan
-- [ ] Yuqori panel (header): foydalanuvchi avatari, til/tema tugmalari, chiqish — alohida header komponenti yo'q (sidebar pastida statik foydalanuvchi bloki bor, lekin til/tema/chiqish tugmalari yo'q)
+- [~] Yuqori panel (header): foydalanuvchi avatari, til/tema tugmalari, chiqish — alohida header komponenti hali yo'q, lekin chiqish tugmasi va foydalanuvchi bloki endi sidebar pastida ishlaydi (til/tema tugmalari hali yo'q)
 - [x] Umumiy sahifa karkasi (app shell) maketi — `app/layout.tsx`: sidebar + asosiy kontent maydoni barcha sahifalarda izchil
 
 ## 1.3 Ekran maketlari
@@ -36,9 +36,12 @@ belgilangan. Sprint 2 shu dizayn asosida kod yozadi.
 > bosqichida ham maketlanmagan.
 
 ### A) Login / Kirish ekrani
-- [ ] Ilova logotipi + nomi ("Jarvis") + tagline
-- [ ] "Google orqali davom etish" tugmasi
-- [ ] Ruxsat yo'q holati (access denied) ko'rinishi
+> **Eslatma (2026-07-15):** Sprint 2 davomida funksional `/login` sahifasi qurildi
+> (`app/login/page.tsx` + `components/auth/login-client.tsx`), lekin Claude Design
+> handoff'dan emas — qo'lda, va "Google orqali kirish" o'rniga Telegram tanlandi.
+- [~] Ilova logotipi + nomi + tagline — bor ("Maqsadlarim" nomi, Send ikonkasi, tagline), lekin "Jarvis" nomi emas va alohida dizayn maketidan kelmagan
+- [x] "... orqali davom etish" tugmasi — arxitektura o'zgardi: Google emas, **"Telegram orqali kirish"** tugmasi (deep-link + polling + avtomatik `signIn`)
+- [ ] Ruxsat yo'q holati (access denied) ko'rinishi — web UI'da yo'q (rad etish xabari faqat bot javobida ko'rinadi, `loginNotAllowed`)
 
 ### B) Dashboard (Bosh sahifa) — eng muhim ekran
 > **Qaror:** yagona "Dashboard" ekrani o'rniga funksionallik 4 alohida sahifaga
@@ -79,7 +82,7 @@ belgilangan. Sprint 2 shu dizayn asosida kod yozadi.
 - [ ] Profil (ism, email, avatar)
 - [ ] Til tanlash (uz/ru/en)
 - [ ] Vaqt mintaqasi
-- [ ] Telegram bog'lash: kod olish tugmasi + ko'rsatma
+- [ ] Telegram bog'lash: kod olish tugmasi + ko'rsatma — **eslatma:** Sozlamalar sahifasi hali yo'q; hisob bog'lash endi umuman shu ekranga bog'liq emas — `/login` orqali deep-link bilan ishlaydi
 - [ ] Google Calendar holati: ulangan/ulanmagan + qayta ulash
 - [ ] Tema (och/qorong'i)
 
@@ -102,7 +105,7 @@ Barcha 6 ekran maketi va dizayn tizimi tayyor bo'lsa → **Sprint 2**.
 ---
 
 ## 📋 Hisobot (avtomatik)
-- **Sana:** 2026-07-08
-- **Tayyorlik:** 21% (done + 0.4×partial)
-- **So'nggi bajarilgan ishlar:** Claude Design'dan handoff olindi (Goals Management App Design — Indigo #4F46E5, Inter, 8px shkala); dizayn tokenlari (`app/tokens/*.css`) va 5 ta baza komponent (`components/ui/`) qo'lda kod qilindi; `lucide-react` ulandi; Maqsadlar/Vazifalar/AI/Kun sahifalari va real sidebar navigatsiyasi qurildi.
-- **Keyingi qadam:** Dark rejim tokenlari va toggle qo'shish; Login/Kalendar/Sozlamalar ekranlari uchun maket yaratish; qolgan komponentlarni (Modal/Dialog umumiy, Select, Textarea, Toast, empty/loading holatlari) qo'shish.
+- **Sana:** 2026-07-15
+- **Tayyorlik:** 25% (done + 0.4×partial)
+- **So'nggi bajarilgan ishlar:** Textarea komponenti qo'shildi (`components/ui/textarea.tsx`); sidebar endi haqiqiy foydalanuvchi ismi/emaili va chiqish tugmasi bilan ishlaydi (5-bo'lim: Bilim bazasi qo'shildi); funksional `/login` sahifasi qurildi (dizayn maketidan emas, Telegram-asosli kirish tugmasi bilan).
+- **Keyingi qadam:** Dark rejim tokenlari va toggle qo'shish; Dashboard/Kalendar/Sozlamalar ekranlari uchun maket yaratish; qolgan komponentlarni (Modal/Dialog umumiy, Select, Toast, empty/loading holatlari) qo'shish.

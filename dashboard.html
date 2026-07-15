@@ -144,16 +144,16 @@ const SPRINTS = [
       {g:"Dizayn tizimi", items:[
         ["p","Rang palitrasi (faqat och rejim, dark yo'q)"],
         ["x","Tipografiya va spacing shkalasi"],
-        ["p","Komponent inventari (5/13: Button/Card/Input/Progress/StatusTag)"],
+        ["p","Komponent inventari (6/14: Button/Card/Input/Progress/StatusTag/Textarea)"],
         ["o","Holat dizaynlari: empty / loading / error"],
         ["o","Til almashtirgich va tema toggle"],
       ]},
       {g:"Navigatsiya", items:[
-        ["p","Desktop sidebar bor, mobil bottom nav yo'q"],
-        ["p","App shell bor, yuqori header (til/tema/chiqish) yo'q"],
+        ["x","Desktop sidebar: real foydalanuvchi + chiqish tugmasi, 5 bo'lim"],
+        ["p","App shell bor, yuqori header (til/tema) yo'q"],
       ]},
       {g:"Ekran maketlari", items:[
-        ["o","Login / kirish"],
+        ["p","Login: funksional /login sahifasi bor (Telegram), dizayn maketidan emas"],
         ["o","Dashboard (yagona ekran o'rniga 4ta sahifaga bo'lindi)"],
         ["p","Maqsadlar (ro'yxat+forma bor, guruhlash/soha/tur yo'q)"],
         ["p","Kunim (/day hozircha faqat statik mock ko'rinish)"],
@@ -164,7 +164,7 @@ const SPRINTS = [
   },
   {
     n:2, title:"MVP (dizayn bo'yicha)", status:"progress",
-    desc:"Ishlaydigan yadro: Google login, maqsad kiritish, kun yozish, Gemini bilan kunni tahlil qilib ertangi rejani yaratish. Calendar/Telegram'siz.",
+    desc:"Ishlaydigan yadro: Telegram/Google login, maqsad kiritish, kun yozish, Gemini bilan kunni tahlil qilib ertangi rejani yaratish. Calendar/Cron'siz.",
     groups:[
       {g:"Karkas", items:[
         ["x","Next.js 16 + TS + Tailwind (create-next-app)"],
@@ -174,40 +174,51 @@ const SPRINTS = [
         ["o","Och/qorong'i rejim"],
         ["x","dev-deps o'rnatilishi (drizzle-kit, dotenv, tsx)"],
       ]},
-      {g:"Baza va Auth", items:[
-        ["x","Neon baza ulandi (Vercel Marketplace) + migratsiya qo'llandi"],
-        ["x","Drizzle sxema (8 jadval) + klient"],
-        ["p","Auth.js Google + allowlist kod tayyor, sinovdan o'tmagan"],
-        ["o","Google Cloud OAuth client + .env kalitlar"],
-        ["o","/login sahifasi + himoyalangan layout"],
+      {g:"Baza, Auth va Telegram login", items:[
+        ["x","Neon baza ulandi + migratsiyalar (0000/0001/0002) qo'llandi"],
+        ["x","Drizzle sxema: telegramLoginTokens + users.telegramUsername/knowledgeBase/agentInstructions qo'shildi"],
+        ["x","auth.ts: Google (faqat Calendar) + Telegram Credentials provider, JWT sessiya — 8/8 skript bilan tasdiqlangan"],
+        ["o","Google Cloud OAuth client + ALLOWED_EMAILS (Calendar hali ulanmagan)"],
+        ["p",".env kalitlar: Telegram/AUTH/GEMINI bor, Google kalitlar yo'q"],
+        ["x","/login (Telegram deep-link) + himoyalangan layout — demo-user butunlay olib tashlandi"],
+        ["x","Chiqish (sign out) tugmasi ishlaydi"],
       ]},
       {g:"Funksiyalar", items:[
-        ["x","Maqsadlar CRUD real bazada (Server Actions, `/`)"],
+        ["x","Maqsadlar CRUD real bazada, endi real auth() sessiyasi orqali"],
         ["p","Maqsad formasi/guruhlash to'liq emas, bo'sh holat yo'q"],
         ["o","Vazifalar (/tasks) hali mock/local state, DB'ga ulanmagan"],
         ["o","Kunim /day (kun kiritish, saqlash)"],
         ["p","AI modul (Gemini) skelet, hali chaqirilmagan"],
         ["o","'Reja generatsiya' tugmasi (E2E)"],
       ]},
+      {g:"Bilim bazasi (yangi)", items:[
+        ["x","/knowledge sahifasi: bilim bazasi + agent instruksiyalari textarea'lari"],
+        ["x","lib/actions/profile.ts server action'lar"],
+        ["x","Telegram AI chat shu ma'lumotdan foydalanadi (lib/ai/chat.ts)"],
+      ]},
     ]
   },
   {
-    n:3, title:"Calendar + Telegram + Cron", status:"partial",
-    desc:"Google Calendar ikki tomonlama sinxron, to'liq interaktiv Telegram bot va avtomatlashtirish (kechki so'rov, kechki generatsiya, haftalik xulosa).",
+    n:3, title:"Calendar + Telegram + Cron", status:"progress",
+    desc:"Google Calendar ikki tomonlama sinxron, to'liq interaktiv Telegram bot (Gemini AI chat bilan) va avtomatlashtirish (kechki so'rov, kechki generatsiya, haftalik xulosa).",
     groups:[
       {g:"Google Calendar", items:[
         ["p","calendar.ts (token, freebusy, event) skelet"],
+        ["x","Auth.js scope'ida calendar.events + calendar.readonly tasdiqlangan"],
         ["o","refresh_token oqimi test"],
         ["o","Bandliklarni o'qib rejaga ulash"],
         ["o","Time-block tasklarni Calendar'ga yozish"],
         ["o","/calendar sahifasi"],
       ]},
       {g:"Telegram bot", items:[
-        ["p","bot.ts (/start,/today,/plan, inline) skelet"],
-        ["p","3 tilda bot matnlari"],
-        ["p","webhook route (secret token)"],
-        ["o","BotFather token + webhook o'rnatish"],
-        ["o","Hisob bog'lash (link kod) oqimi"],
+        ["x","bot.ts qayta yozildi: /start login_<token> deep-link, allowlist, /today, /plan, inline done"],
+        ["x","3 tilda bot matnlari (login, /kun, chat xatosi) yangilandi"],
+        ["x","BotFather orqali haqiqiy bot (@jarvisdreams_bot) + TELEGRAM_BOT_TOKEN"],
+        ["p","webhook route bor, lekin production'da hali setWebhook qilinmagan (lokal: dev-bot.ts polling)"],
+        ["x","Hisob bog'lash: eski link-kod o'rniga /login deep-link oqimi (auth bilan bir xil)"],
+        ["p","/kun buyrug'i (kundalik) — kod tayyor, real Telegramda test qilinmagan"],
+        ["x","AI chat: erkin matn → Gemini (lib/ai/chat.ts), bilim bazasi/instruksiyalar skript orqali tasdiqlangan"],
+        ["o","/today, /plan — real Telegramda E2E test"],
       ]},
       {g:"Avtomatlashtirish", items:[
         ["p","evening / nightly / weekly cron route'lari"],

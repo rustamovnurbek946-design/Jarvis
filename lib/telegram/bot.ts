@@ -1,10 +1,16 @@
-import { Bot, InlineKeyboard } from "grammy";
-import { and, eq } from "drizzle-orm";
+import { Bot, InlineKeyboard, type Context } from "grammy";
+import { and, eq, isNull, gt } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { users, tasks as tasksTable, dailyLogs } from "@/lib/db/schema";
+import {
+  users,
+  tasks as tasksTable,
+  dailyLogs,
+  telegramLoginTokens,
+} from "@/lib/db/schema";
 import { botT } from "./messages";
 import { todayISO } from "@/lib/date";
 import { generatePlanForUser } from "@/lib/ai/generatePlan";
+import { answerUserQuestion } from "@/lib/ai/chat";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 if (!token) {
@@ -31,13 +37,77 @@ async function findUserByChat(chatId: string) {
   return u ?? null;
 }
 
+function isAllowedTelegramUsername(username: string | undefined): boolean {
+  const allowed = (process.env.ALLOWED_TELEGRAM_USERNAMES ?? "")
+    .split(",")
+    .map((s) => s.trim().replace(/^@/, "").toLowerCase())
+    .filter(Boolean);
+  if (allowed.length === 0) return true; // no allowlist configured = open
+  if (!username) return false;
+  return allowed.includes(username.toLowerCase());
+}
+
 function registerHandlers(bot: Bot) {
   bot.command("start", async (ctx) => {
     const chatId = String(ctx.chat.id);
+    const payload = ctx.match;
+
+    if (typeof payload === "string" && payload.startsWith("login_")) {
+      return handleLoginDeepLink(ctx, chatId, payload.slice("login_".length));
+    }
+
     const user = await findUserByChat(chatId);
     const locale = user?.locale ?? "uz";
     await ctx.reply(botT(locale).start);
   });
+
+  async function handleLoginDeepLink(
+    ctx: Context,
+    chatId: string,
+    loginToken: string,
+  ) {
+    let user = await findUserByChat(chatId);
+
+    if (!user) {
+      const username = ctx.from?.username;
+      if (!isAllowedTelegramUsername(username)) {
+        return ctx.reply(botT("uz").loginNotAllowed);
+      }
+      const [created] = await db
+        .insert(users)
+        .values({
+          name: ctx.from?.first_name ?? "Foydalanuvchi",
+          telegramChatId: chatId,
+          telegramUsername: username ?? null,
+        })
+        .returning();
+      user = created;
+    }
+
+    const t = botT(user.locale);
+    const [tokenRow] = await db
+      .select()
+      .from(telegramLoginTokens)
+      .where(
+        and(
+          eq(telegramLoginTokens.token, loginToken),
+          isNull(telegramLoginTokens.consumedAt),
+          gt(telegramLoginTokens.expiresAt, new Date()),
+        ),
+      )
+      .limit(1);
+
+    if (!tokenRow) {
+      return ctx.reply(t.loginExpired);
+    }
+
+    await db
+      .update(telegramLoginTokens)
+      .set({ approvedUserId: user.id })
+      .where(eq(telegramLoginTokens.token, loginToken));
+
+    await ctx.reply(t.loginApproved);
+  }
 
   bot.command("today", async (ctx) => {
     const user = await findUserByChat(String(ctx.chat.id));
@@ -82,6 +152,35 @@ function registerHandlers(bot: Bot) {
     }
   });
 
+  // Explicit daily-journal command (free text is now reserved for Q&A below).
+  bot.command("kun", async (ctx) => {
+    const user = await findUserByChat(String(ctx.chat.id));
+    if (!user) return ctx.reply(botT("uz").notLinked);
+    const t = botT(user.locale);
+    const logText = ctx.match?.trim();
+    if (!logText) return ctx.reply(t.kunUsage);
+
+    const day = todayISO(user.timezone);
+    const [log] = await db
+      .select()
+      .from(dailyLogs)
+      .where(and(eq(dailyLogs.userId, user.id), eq(dailyLogs.date, day)))
+      .limit(1);
+
+    if (log) {
+      const combined = log.freeText ? `${log.freeText}\n${logText}` : logText;
+      await db
+        .update(dailyLogs)
+        .set({ freeText: combined })
+        .where(eq(dailyLogs.id, log.id));
+    } else {
+      await db
+        .insert(dailyLogs)
+        .values({ userId: user.id, date: day, freeText: logText });
+    }
+    await ctx.reply(t.logSaved);
+  });
+
   // Toggle a task done from inline buttons
   bot.callbackQuery(/^done:(.+)$/, async (ctx) => {
     const user = await findUserByChat(String(ctx.chat?.id));
@@ -99,51 +198,26 @@ function registerHandlers(bot: Bot) {
     }
   });
 
-  // Free text: link code OR daily journal entry
+  // Any other free text: answered via Gemini using the user's knowledge
+  // base + agent instructions (see lib/ai/chat.ts). Daily journaling now
+  // goes through the explicit /kun command above.
   bot.on("message:text", async (ctx) => {
     const chatId = String(ctx.chat.id);
     const text = ctx.message.text.trim();
-    const existing = await findUserByChat(chatId);
+    const user = await findUserByChat(chatId);
 
-    if (!existing) {
-      // Try to interpret text as a link code
-      const [match] = await db
-        .select()
-        .from(users)
-        .where(eq(users.telegramLinkCode, text))
-        .limit(1);
-      if (match) {
-        await db
-          .update(users)
-          .set({ telegramChatId: chatId, telegramLinkCode: null })
-          .where(eq(users.id, match.id));
-        return ctx.reply(botT(match.locale).linked);
-      }
+    if (!user) {
       return ctx.reply(botT("uz").notLinked);
     }
 
-    // Append to today's daily log free text
-    const t = botT(existing.locale);
-    const day = todayISO(existing.timezone);
-    const [log] = await db
-      .select()
-      .from(dailyLogs)
-      .where(
-        and(eq(dailyLogs.userId, existing.id), eq(dailyLogs.date, day)),
-      )
-      .limit(1);
-
-    if (log) {
-      const combined = log.freeText ? `${log.freeText}\n${text}` : text;
-      await db
-        .update(dailyLogs)
-        .set({ freeText: combined })
-        .where(eq(dailyLogs.id, log.id));
-    } else {
-      await db
-        .insert(dailyLogs)
-        .values({ userId: existing.id, date: day, freeText: text });
+    const t = botT(user.locale);
+    await ctx.replyWithChatAction("typing");
+    try {
+      const answer = await answerUserQuestion(user, text);
+      await ctx.reply(answer);
+    } catch (err) {
+      console.error("gemini chat failed", err);
+      await ctx.reply(t.chatError);
     }
-    await ctx.reply(t.logSaved);
   });
 }

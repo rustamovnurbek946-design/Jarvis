@@ -1,11 +1,15 @@
 import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 import { db, goals } from "@/lib/db";
-import { getDemoUserId } from "@/lib/db/demo-user";
+import { auth } from "@/auth";
 import { GoalsPageClient } from "@/components/goals/goals-page-client";
 import type { GoalItem } from "@/lib/actions/goals";
 
 export default async function GoalsPage() {
-  const userId = await getDemoUserId();
+  const session = await auth();
+  if (!session?.user?.id) redirect("/login");
+  const userId = session.user.id;
+
   const rows = await db
     .select()
     .from(goals)
