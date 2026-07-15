@@ -3,16 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { Flag, Target, CheckSquare, Sparkles, BarChart3, BookOpen, LogOut } from "lucide-react";
+import { Flag, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const NAV_ITEMS = [
-  { href: "/", icon: Target, label: "Maqsadlar" },
-  { href: "/tasks", icon: CheckSquare, label: "Vazifalar" },
-  { href: "/ai", icon: Sparkles, label: "AI xulosasi" },
-  { href: "/day", icon: BarChart3, label: "Kun tahlili" },
-  { href: "/knowledge", icon: BookOpen, label: "Bilim bazasi" },
-] as const;
+import { NAV_ITEMS } from "./nav-items";
 
 interface SidebarProps {
   userName: string;
@@ -24,7 +17,7 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
   const initial = userName.trim().charAt(0).toUpperCase() || "?";
 
   return (
-    <div className="flex w-60 shrink-0 flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)]">
+    <div className="hidden w-60 shrink-0 flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)] md:flex">
       {/* Brand */}
       <div className="flex items-center gap-[11px] border-b border-[var(--color-border-light)] px-6 py-[22px]">
         <div className="flex size-[34px] shrink-0 items-center justify-center rounded-[9px] bg-[var(--color-primary)]">

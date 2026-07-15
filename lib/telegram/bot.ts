@@ -8,6 +8,8 @@ import {
   telegramLoginTokens,
 } from "@/lib/db/schema";
 import { botT } from "./messages";
+import { isAllowedTelegramUsername } from "./allowlist";
+import { getMiniAppUrl } from "./miniapp-url";
 import { todayISO } from "@/lib/date";
 import { generatePlanForUser } from "@/lib/ai/generatePlan";
 import { answerUserQuestion } from "@/lib/ai/chat";
@@ -35,16 +37,6 @@ async function findUserByChat(chatId: string) {
     .where(eq(users.telegramChatId, chatId))
     .limit(1);
   return u ?? null;
-}
-
-function isAllowedTelegramUsername(username: string | undefined): boolean {
-  const allowed = (process.env.ALLOWED_TELEGRAM_USERNAMES ?? "")
-    .split(",")
-    .map((s) => s.trim().replace(/^@/, "").toLowerCase())
-    .filter(Boolean);
-  if (allowed.length === 0) return true; // no allowlist configured = open
-  if (!username) return false;
-  return allowed.includes(username.toLowerCase());
 }
 
 function registerHandlers(bot: Bot) {
@@ -108,6 +100,15 @@ function registerHandlers(bot: Bot) {
 
     await ctx.reply(t.loginApproved);
   }
+
+  bot.command("app", async (ctx) => {
+    const user = await findUserByChat(String(ctx.chat.id));
+    const t = botT(user?.locale ?? "uz");
+    const appUrl = getMiniAppUrl();
+    if (!appUrl) return ctx.reply("⚠️ NEXT_PUBLIC_APP_URL sozlanmagan.");
+    const kb = new InlineKeyboard().webApp(t.openAppButton, appUrl);
+    await ctx.reply(t.openAppMessage, { reply_markup: kb });
+  });
 
   bot.command("today", async (ctx) => {
     const user = await findUserByChat(String(ctx.chat.id));

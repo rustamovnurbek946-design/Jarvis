@@ -43,6 +43,41 @@ xabar/generatsiya qiladi.
 - [~] Erkin matn → bugungi `daily_log` ga qo'shilishi test — **arxitektura o'zgardi:** erkin matn endi Gemini AI chat'ga boradi, kundalik yozish alohida `/kun` buyrug'i orqali; `/kun` kodi tayyor lekin haqiqiy Telegram orqali sinovdan o'tmagan
 - [x] AI bilan qisqa yozishish (ixtiyoriy kengaytma): maqsad/reja bo'yicha savol-javob — `lib/ai/chat.ts` (`answerUserQuestion`) foydalanuvchining bilim bazasi + agent instruksiyalari asosida Gemini'dan javob oladi, bot.ts'da erkin matn handleri sifatida ulangan; skript orqali sinovdan o'tkazilgan (bilim bazasi/instruksiyalardan to'g'ri foydalanib javob berdi)
 
+### Telegram Mini App (yangi, sprint doirasidan tashqari qo'shildi)
+
+> Reja hujjatida bo'lmagan, lekin shu sessiyada qo'shilgan funksiya: web ilovani
+> Telegram ichida (Mini App sifatida) ham ishlaydigan qilish, desktop brauzer
+> tajribasini o'zgartirmasdan.
+
+- [x] Root layout Telegram Mini App SDK'ni yuklaydi (`telegram-web-app.js`,
+  `beforeInteractive`) + `viewport` metasi (`viewportFit: cover`) — `app/layout.tsx`
+- [x] `components/telegram/telegram-miniapp-init.tsx` — `ready()`/`expand()`/
+  `setHeaderColor`/`setBackgroundColor`/`disableVerticalSwipes` chaqiradi va
+  `viewportChanged` orqali balandlikni CSS o'zgaruvchisiga yozadi
+- [x] `lib/telegram/miniapp-client.ts` (`isTelegramMiniApp`/`getTelegramInitData`)
+  + `lib/telegram/webapp.d.ts` (`window.Telegram` tiplari)
+- [x] `lib/telegram/verify-init-data.ts` — Telegram'ning rasmiy initData HMAC-SHA256
+  tekshiruvi (faqat Node `crypto`, 24 soatlik yangilik tekshiruvi bilan)
+- [x] `auth.ts`ga yangi **Credentials("telegram-miniapp")** provayder — tasdiqlangan
+  initData orqali `telegramChatId` bo'yicha foydalanuvchi topadi yoki (allowlist
+  orqali) yaratadi — bir xil allowlist (`lib/telegram/allowlist.ts`, `bot.ts`
+  bilan umumiy) qayta ishlatiladi
+- [x] `components/auth/login-client.tsx` — Mini App kontekstini aniqlab avtomatik
+  `signIn("telegram-miniapp")` chaqiradi; muvaffaqiyatsiz bo'lsa "Qaytadan
+  urinish" tugmasi ko'rsatadi, eski deep-link tugmasiga hech qachon qaytmaydi
+  (t.me havolasi Telegram WebView ichida ochilmasligi sababli)
+- [x] `bot.ts`ga `/app` buyrug'i (inline "Ilovani ochish" tugmasi) + yangi
+  `scripts/set-menu-button.ts` (`npm run bot:set-menu`) — botning doimiy menyu
+  tugmasini Mini App'ga ochadigan qilib sozlaydi
+- [x] `lib/telegram/miniapp-url.ts` — Mini App kirish nuqtasi ataylab `/` emas,
+  `/login`ga yo'naltirilgan (bare root auth guard orqali `/login`ga
+  server-redirect qiladi, va shu qo'shimcha sakrash ba'zi klientlarda
+  Telegram imzolagan `#tgWebAppData=...` fragmentini yo'qotib qo'yardi — real
+  qurilmada sinovda topilgan xato)
+- [ ] Haqiqiy Telegram qurilmasida to'liq E2E tekshiruv (auto-login, `/app`
+  tugmasi, menyu tugmasi) — sandbox'dan bajarib bo'lmaydi, foydalanuvchi o'z
+  telefonida sinamoqda
+
 ## 3.3 Avtomatlashtirish (Vercel Cron)
 
 - [~] `app/api/cron/evening/route.ts` — kechki "bugun qanday o'tdi?" so'rovi — *bajarilgan*
@@ -76,7 +111,7 @@ Calendar + Telegram + cron end-to-end ishlasa → **Sprint 4**.
 
 ## 📋 Hisobot (avtomatik)
 - **Sana:** 2026-07-15
-- **Tayyorlik:** 31% (done + 0.4×partial)
-- **So'nggi bajarilgan ishlar:** Telegram bot login/hisob-bog'lash uchun asosiy kanalga aylandi — `lib/telegram/bot.ts` qayta yozildi (`/start login_<token>` deep-link, allowlist bilan avtomatik foydalanuvchi yaratish, `/kun` kundalik buyrug'i, erkin matn → Gemini AI chat), `lib/telegram/messages.ts` yangi matnlar bilan to'ldirildi, haqiqiy bot (`@jarvisdreams_bot`) yaratildi va `.env.local`ga ulandi, `scripts/dev-bot.ts` lokal long-polling test skripti qo'shildi. Google Calendar tomoni (3.1) va cron'lar (3.3) bu sessiyada o'zgarishsiz qoldi.
-- **Keyingi qadam:** Bot handlerlarini haqiqiy Telegram orqali E2E sinovdan o'tkazish (`/today`, `/plan`, `/kun`, inline done); production webhook o'rnatish (`setWebhook`); Google Calendar OAuth oqimini (refresh_token, busySlots) haqiqiy hisobda tekshirish.
+- **Tayyorlik:** 44% (done + 0.4×partial)
+- **So'nggi bajarilgan ishlar:** Web ilova Telegram Mini App sifatida ham ishlaydigan qilindi — root layout Telegram WebApp SDK'ni yuklaydi (`TelegramMiniAppInit`: ready/expand/setHeaderColor/disableVerticalSwipes), `lib/telegram/verify-init-data.ts` initData'ni HMAC-SHA256 orqali tasdiqlaydi, `auth.ts`ga yangi `Credentials("telegram-miniapp")` provayder qo'shildi (find-or-create by `telegramChatId`, umumiy allowlist `lib/telegram/allowlist.ts`), `login-client.tsx` Mini App'da avtomatik kirishga o'tadi (muvaffaqiyatsizlikda faqat "qaytadan urinish", eski deep-link tugmasiga qaytmaydi), bot'ga `/app` buyrug'i va `scripts/set-menu-button.ts` qo'shildi. Real qurilmada test paytida topilgan xato tuzatildi: Mini App kirish nuqtasi `/` o'rniga to'g'ridan-to'g'ri `/login`ga yo'naltirildi (aks holda auth-redirect sakrashi Telegram imzosini yo'qotardi).
+- **Keyingi qadam:** Haqiqiy Telegram qurilmasida to'liq E2E tekshiruv (auto-login, `/app`, menyu tugmasi); bot handlerlarini (`/today`, `/plan`, `/kun`, inline done) haqiqiy Telegram orqali sinovdan o'tkazish; production webhook o'rnatish (`setWebhook`); Google Calendar OAuth oqimini (refresh_token, busySlots) haqiqiy hisobda tekshirish.
 

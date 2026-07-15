@@ -15,6 +15,8 @@ type BotStrings = {
   eveningPrompt: string;
   markedDone: string;
   chatError: string;
+  openAppButton: string;
+  openAppMessage: string;
 };
 
 const STRINGS: Record<Locale, BotStrings> = {
@@ -38,6 +40,8 @@ const STRINGS: Record<Locale, BotStrings> = {
       "🌙 Bugun qanday o'tdi? /kun buyrug'i bilan yozing, masalan: /kun bugun rejani bajardim.",
     markedDone: "✅ Bajarildi deb belgilandi!",
     chatError: "⚠️ Javob berishda xatolik yuz berdi. Birozdan keyin qayta urinib ko'ring.",
+    openAppButton: "📱 Ilovani ochish",
+    openAppMessage: "Ilovani to'g'ridan-to'g'ri shu yerda ochish uchun tugmani bosing:",
   },
   ru: {
     start:
@@ -58,6 +62,8 @@ const STRINGS: Record<Locale, BotStrings> = {
     eveningPrompt: "🌙 Как прошёл день? Напишите через /kun, например: /kun выполнил план.",
     markedDone: "✅ Отмечено как выполнено!",
     chatError: "⚠️ Ошибка при ответе. Попробуйте ещё раз чуть позже.",
+    openAppButton: "📱 Открыть приложение",
+    openAppMessage: "Нажмите кнопку, чтобы открыть приложение прямо здесь:",
   },
   en: {
     start:
@@ -76,6 +82,8 @@ const STRINGS: Record<Locale, BotStrings> = {
     eveningPrompt: "🌙 How was your day? Write it with /kun, e.g.: /kun finished my plan.",
     markedDone: "✅ Marked as done!",
     chatError: "⚠️ Something went wrong answering that. Please try again shortly.",
+    openAppButton: "📱 Open app",
+    openAppMessage: "Tap the button to open the app right here:",
   },
 };
 

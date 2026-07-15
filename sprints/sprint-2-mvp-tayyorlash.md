@@ -40,7 +40,7 @@ tasklarni yaratadi va Dashboard'da ko'rinadi. Barchasi 3 tilda.
 - [x] `app/api/auth/[...nextauth]/route.ts` — mavjud, `auth.ts` handlerlarini eksport qiladi
 - [ ] Google Cloud Console'da OAuth client yaratish (redirect URI: `/api/auth/callback/google`) — hali bajarilmagan (endi faqat Calendar ulash uchun kerak, login uchun shart emas)
 - [~] `.env.local`: kalitlar — `AUTH_SECRET`, `AUTH_URL`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME`, `ALLOWED_TELEGRAM_USERNAMES`, `GEMINI_API_KEY` qo'shildi; `AUTH_GOOGLE_ID/SECRET` va `ALLOWED_EMAILS` hali yo'q (Google Calendar ulanmagani uchun kerak emas edi)
-- [x] `/login` sahifasi — dizayn bo'yicha emas, Telegram deep-link login UI (`app/login/page.tsx` + `components/auth/login-client.tsx`): tugma → bot ochiladi → polling → avtomatik `signIn("telegram")`
+- [x] `/login` sahifasi — dizayn bo'yicha emas, Telegram deep-link login UI (`app/login/page.tsx` + `components/auth/login-client.tsx`): tugma → bot ochiladi → polling → avtomatik `signIn("telegram")`; endi Telegram Mini App ichida ochilganda esa initData orqali avtomatik `signIn("telegram-miniapp")` (tafsilot: Sprint 3, "Telegram Mini App" bo'limi)
 - [x] Himoyalangan layout: sessiya yo'q bo'lsa `/login` ga yo'naltirish — `app/(app)/layout.tsx` (Server Component) orqali amalga oshirildi; middleware **ataylab** ishlatilmadi (CVE-2025-29927 sababli rasmiy Vercel tavsiyasiga ko'ra middleware auth uchun yagona himoya bo'lmasligi kerak). `lib/db/demo-user.ts` o'chirildi, barcha sahifalar/action'lar (`app/(app)/page.tsx`, `lib/actions/goals.ts`) endi real `auth()` sessiyasidan `userId` oladi
 - [x] Chiqish (sign out) tugmasi — `components/layout/sidebar.tsx`da ishlaydi, haqiqiy foydalanuvchi ismi/emailini ham ko'rsatadi
 
@@ -108,5 +108,5 @@ AI reja sikli (maqsad → kun → tahlil → ertangi reja) web'da to'liq ishlasa
 ## 📋 Hisobot (avtomatik)
 - **Sana:** 2026-07-15
 - **Tayyorlik:** 46% (done + 0.4×partial)
-- **So'nggi bajarilgan ishlar:** Login oqimi to'liq ishga tushdi — Telegram asosiy kirish usuli bo'ldi (`auth.ts` Credentials provider, JWT sessiya, `telegramLoginTokens` jadvali, `/login` deep-link UI), himoyalangan layout (`app/(app)/layout.tsx`) va sign-out qo'shildi; `lib/db/demo-user.ts` butunlay olib tashlandi, barcha sahifalar/action'lar real `auth()` sessiyasidan foydalanadi; yangi Bilim bazasi sahifasi (`/knowledge`) qo'shildi.
+- **So'nggi bajarilgan ishlar:** Login oqimi to'liq ishga tushdi — Telegram asosiy kirish usuli bo'ldi (`auth.ts` Credentials provider, JWT sessiya, `telegramLoginTokens` jadvali, `/login` deep-link UI), himoyalangan layout (`app/(app)/layout.tsx`) va sign-out qo'shildi; `lib/db/demo-user.ts` butunlay olib tashlandi, barcha sahifalar/action'lar real `auth()` sessiyasidan foydalanadi; yangi Bilim bazasi sahifasi (`/knowledge`) qo'shildi; `/login` endi Telegram Mini App ichida ham avtomatik kirishni qo'llab-quvvatlaydi (tafsilot: Sprint 3).
 - **Keyingi qadam:** `/tasks` va `/day` sahifalarini real server action'lar (`createTask`, `saveDailyLog`) orqali bazaga ulash; "Reja generatsiya" tugmasini UI'ga qo'shib Gemini oqimini birinchi marta chaqirish.

@@ -24,7 +24,7 @@ foydalanuvchi kirib, real maqsad/kun kiritib, reja olishi mumkin.
 
 - [ ] Barcha bo'sh holatlar (empty states) va yuklanish (skeleton) ko'rinishlari
 - [ ] Xatolik xabarlari (toast) 3 tilda
-- [ ] Mobil moslashuv (responsive) barcha ekranlarda
+- [~] Mobil moslashuv (responsive) barcha ekranlarda — sidebar↔bottom-nav (`components/layout/bottom-nav.tsx`), Maqsadlar/Vazifalar/AI/Kun va Login sahifalari 375px/1280px'da brauzer preview'da tekshirilgan, gorizontal toshib ketish yo'q; haqiqiy Telegram qurilmasida va (app) himoyalangan sahifalarda to'liq mobil tekshiruv hali qilinmagan
 - [ ] Och/qorong'i rejim barcha komponentlarda tekshirilgan
 - [ ] **Statistika:** oddiy grafiklar (kunlik bajarilish trendi, maqsad progressi) — `recharts` yoki shadcn chart
 - [ ] Ish faoliyati (performance): sahifa yuklanishi, Server Component'lardan foydalanish
@@ -71,8 +71,8 @@ rejalashtirilishi mumkin.
 ---
 
 ## 📋 Hisobot (avtomatik)
-- **Sana:** 2026-07-08
-- **Tayyorlik:** 0% (done + 0.4×partial)
-- **So'nggi bajarilgan ishlar:** Hali boshlanmagan — Sprint 1/2 asosiy funksionallik tugamaguncha testlash/deploy bosqichi navbatga qo'yiladi.
-- **Keyingi qadam:** Sprint 2 va 3 asosiy oqimlari (Auth, AI reja, Calendar, Telegram) tugagach E2E testlashni boshlash.
+- **Sana:** 2026-07-15
+- **Tayyorlik:** 1% (done + 0.4×partial)
+- **So'nggi bajarilgan ishlar:** Sprint 4 asosan hali boshlanmagan; faqat mobil moslashuv (responsive) tomonidan qisman ish bor — sidebar↔bottom-nav va Maqsadlar/Vazifalar/AI/Kun/Login sahifalari brauzer preview'da (375px/1280px) tekshirilgan, `tsc --noEmit` va `eslint` toza. Haqiqiy qurilmada/Telegramda tekshiruv, sayqallash va deploy bosqichlari hali navbatda.
+- **Keyingi qadam:** Sprint 2 va 3 asosiy oqimlari (Auth, AI reja, Calendar, Telegram) tugagach va Mini App haqiqiy qurilmada tasdiqlangach E2E testlashni boshlash.
 

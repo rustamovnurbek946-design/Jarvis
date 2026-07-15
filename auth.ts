@@ -11,6 +11,8 @@ import {
   verificationTokens,
   telegramLoginTokens,
 } from "@/lib/db/schema";
+import { verifyTelegramInitData } from "@/lib/telegram/verify-init-data";
+import { isAllowedTelegramUsername } from "@/lib/telegram/allowlist";
 
 const allowedEmails = (process.env.ALLOWED_EMAILS ?? "")
   .split(",")
@@ -92,6 +94,42 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!user) return null;
 
         return { id: user.id, name: user.name, email: user.email };
+      },
+    }),
+    Credentials({
+      id: "telegram-miniapp",
+      name: "Telegram Mini App",
+      credentials: {
+        initData: { label: "Telegram init data", type: "text" },
+      },
+      async authorize(credentials) {
+        const initData =
+          typeof credentials?.initData === "string" ? credentials.initData : null;
+        const botToken = process.env.TELEGRAM_BOT_TOKEN;
+        if (!initData || !botToken) return null;
+
+        const tgUser = verifyTelegramInitData(initData, botToken);
+        if (!tgUser) return null;
+
+        const chatId = String(tgUser.id);
+        const [existing] = await db
+          .select()
+          .from(users)
+          .where(eq(users.telegramChatId, chatId))
+          .limit(1);
+        if (existing) return { id: existing.id, name: existing.name, email: existing.email };
+
+        if (!isAllowedTelegramUsername(tgUser.username)) return null;
+
+        const [created] = await db
+          .insert(users)
+          .values({
+            name: tgUser.firstName ?? "Foydalanuvchi",
+            telegramChatId: chatId,
+            telegramUsername: tgUser.username ?? null,
+          })
+          .returning();
+        return { id: created.id, name: created.name, email: created.email };
       },
     }),
   ],

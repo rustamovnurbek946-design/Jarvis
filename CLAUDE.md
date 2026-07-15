@@ -131,3 +131,18 @@ uchun): `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `ALLOWED_EMAILS`. Namuna:
   (`lib/ai/chat.ts`) yuboriladi; kundalik yozish uchun alohida `/kun <matn>`
   buyrug'i qo'shildi — erkin savol-javob va kundalik yozishni bir-biridan
   aniq ajratish uchun.
+- [2026-07-15] Web ilova Telegram **Mini App** sifatida ham ishlaydi, lekin
+  alohida ilova sifatida emas — bitta Next.js kod bazasi, Tailwind
+  breakpoint'lari (`md:`) orqali desktop sidebar va mobil bottom-nav
+  o'rtasida almashadi — ikkita alohida frontend'ni saqlashdan qochish uchun.
+- [2026-07-15] Mini App auto-login uchun Telegram'ning rasmiy `initData`
+  HMAC-SHA256 tekshiruvi (`lib/telegram/verify-init-data.ts`) asosida yangi
+  `Credentials("telegram-miniapp")` provayderi qo'shildi (mavjud
+  `Credentials("telegram")` deep-link oqimidan alohida) — Mini App WebView
+  ichida foydalanuvchini bot bilan alohida tasdiqlashsiz, Telegram allaqachon
+  imzolagan ma'lumot orqali darhol kiritish uchun.
+- [2026-07-15] Mini App kirish nuqtasi (menyu tugmasi, `/app` buyrug'i) ataylab
+  bare app root (`/`) emas, to'g'ridan-to'g'ri `/login`ga yo'naltirildi
+  (`lib/telegram/miniapp-url.ts`) — root sahifadagi auth-redirect sakrashi
+  ba'zi Telegram klientlarida imzolangan `#tgWebAppData=...` fragmentini
+  yo'qotib, auto-login'ni sindirib qo'ygani real qurilmada aniqlandi.

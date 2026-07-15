@@ -28,7 +28,7 @@ export default function DayAnalysisPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-5">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(260px,100%),1fr))] gap-5">
         <Card padding="lg" shadow="sm">
           <div className="mb-4 flex items-center gap-2">
             <div className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-[var(--color-success-light)]">

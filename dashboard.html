@@ -150,15 +150,19 @@ const SPRINTS = [
       ]},
       {g:"Navigatsiya", items:[
         ["x","Desktop sidebar: real foydalanuvchi + chiqish tugmasi, 5 bo'lim"],
+        ["x","Mobil pastki navigatsiya (bottom-nav), sidebar md:flex bilan desktopga cheklandi"],
         ["p","App shell bor, yuqori header (til/tema) yo'q"],
       ]},
       {g:"Ekran maketlari", items:[
-        ["p","Login: funksional /login sahifasi bor (Telegram), dizayn maketidan emas"],
+        ["p","Login: funksional /login sahifasi bor (Telegram + Mini App auto-login), dizayn maketidan emas"],
         ["o","Dashboard (yagona ekran o'rniga 4ta sahifaga bo'lindi)"],
         ["p","Maqsadlar (ro'yxat+forma bor, guruhlash/soha/tur yo'q)"],
         ["p","Kunim (/day hozircha faqat statik mock ko'rinish)"],
         ["o","Kalendar (haftalik)"],
         ["o","Sozlamalar"],
+      ]},
+      {g:"Yakuniy tayyorgarlik", items:[
+        ["p","Maqsadlar/Vazifalar/AI/Kun + app shell responsive (375px'da toshib ketish yo'q); Dashboard/Kalendar/Sozlamalar hali yo'q"],
       ]},
     ]
   },
@@ -220,6 +224,13 @@ const SPRINTS = [
         ["x","AI chat: erkin matn → Gemini (lib/ai/chat.ts), bilim bazasi/instruksiyalar skript orqali tasdiqlangan"],
         ["o","/today, /plan — real Telegramda E2E test"],
       ]},
+      {g:"Telegram Mini App (yangi)", items:[
+        ["x","Root layout Telegram WebApp SDK yuklaydi (ready/expand/setHeaderColor/disableVerticalSwipes)"],
+        ["x","initData HMAC-SHA256 tasdiqlash (verify-init-data.ts) + Credentials(\"telegram-miniapp\") auto-login"],
+        ["x","/app buyrug'i + scripts/set-menu-button.ts — botning doimiy menyu tugmasi"],
+        ["x","Mini App kirish nuqtasi /login'ga to'g'ridan-to'g'ri yo'naltirildi (real qurilmada topilgan xato tuzatildi)"],
+        ["o","Haqiqiy Telegram qurilmasida to'liq E2E tekshiruv"],
+      ]},
       {g:"Avtomatlashtirish", items:[
         ["p","evening / nightly / weekly cron route'lari"],
         ["p","weeklySummary + CRON_SECRET guard"],
@@ -229,7 +240,7 @@ const SPRINTS = [
     ]
   },
   {
-    n:4, title:"Testlash va prodga chiqarish", status:"todo",
+    n:4, title:"Testlash va prodga chiqarish", status:"partial",
     desc:"E2E test, sayqallash (empty/loading/xato holatlar, statistika grafiklari), Vercelga deploy, webhook va cron'ni prod'da faollashtirish.",
     groups:[
       {g:"Sifat", items:[
@@ -240,7 +251,7 @@ const SPRINTS = [
       ]},
       {g:"Sayqallash", items:[
         ["o","Empty / loading / toast"],
-        ["o","Mobil + dark mode tekshiruv"],
+        ["p","Mobil (brauzer preview'da tekshirilgan) + dark mode tekshiruv (dark hali yo'q)"],
         ["o","Statistika grafiklari"],
       ]},
       {g:"Deploy", items:[

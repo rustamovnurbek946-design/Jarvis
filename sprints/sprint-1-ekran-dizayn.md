@@ -25,7 +25,7 @@ belgilangan. Sprint 2 shu dizayn asosida kod yozadi.
 ## 1.2 Navigatsiya va layout
 
 - [x] **Desktop:** chap tomonda sidebar — real `components/layout/sidebar.tsx` (Link + `usePathname`), 5 bo'lim: Maqsadlar, Vazifalar, AI xulosasi, Kun tahlili, Bilim bazasi; endi haqiqiy foydalanuvchi ismi/emaili va chiqish (sign out) tugmasi bilan
-- [ ] **Mobil:** pastki navigatsiya (bottom tab bar) yoki hamburger menyu — topilmadi, responsive/mobil variant hali ishlanmagan
+- [x] **Mobil:** pastki navigatsiya (bottom tab bar) yoki hamburger menyu — `components/layout/bottom-nav.tsx` (5 bo'lim, `md:hidden`), sidebar `md:flex` bilan faqat desktopda ko'rinadi, `app/(app)/layout.tsx` `h-dvh` + mobil pastki bo'shliq (`pb-24`) bilan moslashtirildi
 - [~] Yuqori panel (header): foydalanuvchi avatari, til/tema tugmalari, chiqish — alohida header komponenti hali yo'q, lekin chiqish tugmasi va foydalanuvchi bloki endi sidebar pastida ishlaydi (til/tema tugmalari hali yo'q)
 - [x] Umumiy sahifa karkasi (app shell) maketi — `app/layout.tsx`: sidebar + asosiy kontent maydoni barcha sahifalarda izchil
 
@@ -88,7 +88,7 @@ belgilangan. Sprint 2 shu dizayn asosida kod yozadi.
 
 ## 1.4 Yakuniy tayyorgarlik
 
-- [ ] Barcha ekranlarning mobil va desktop variantlari — faqat desktop qatlami qurilgan
+- [~] Barcha ekranlarning mobil va desktop variantlari — Maqsadlar/Vazifalar/AI/Kun sahifalari va app shell (sidebar↔bottom-nav) endi responsive (grid `minmax(min(Npx,100%),1fr)`, header'lar `flex-wrap`, 375px kenglikda gorizontal toshib ketish yo'q); Login sahifasi ham Telegram Mini App konteksti uchun moslashtirildi — Dashboard/Kalendar/Sozlamalar ekranlari hali yo'q, haqiqiy qurilmada (Telegram ilovasi ichida) to'liq tekshiruv qilinmagan
 - [ ] Dizayndan shadcn komponentlariga xaritalash (qaysi ekranda qaysi komponent) — **qaror:** shadcn CLI ishlatilmadi, komponentlar dizayn handoff bundle asosida qo'lda yozildi (`components/ui/`)
 - [x] Rang va shrift qiymatlarini `globals.css` / theme tokenlariga o'tkazishga tayyor holatda hujjatlash — `app/tokens/{colors,typography,spacing}.css`, `app/globals.css` orqali ulangan
 
@@ -106,6 +106,6 @@ Barcha 6 ekran maketi va dizayn tizimi tayyor bo'lsa → **Sprint 2**.
 
 ## 📋 Hisobot (avtomatik)
 - **Sana:** 2026-07-15
-- **Tayyorlik:** 25% (done + 0.4×partial)
-- **So'nggi bajarilgan ishlar:** Textarea komponenti qo'shildi (`components/ui/textarea.tsx`); sidebar endi haqiqiy foydalanuvchi ismi/emaili va chiqish tugmasi bilan ishlaydi (5-bo'lim: Bilim bazasi qo'shildi); funksional `/login` sahifasi qurildi (dizayn maketidan emas, Telegram-asosli kirish tugmasi bilan).
-- **Keyingi qadam:** Dark rejim tokenlari va toggle qo'shish; Dashboard/Kalendar/Sozlamalar ekranlari uchun maket yaratish; qolgan komponentlarni (Modal/Dialog umumiy, Select, Toast, empty/loading holatlari) qo'shish.
+- **Tayyorlik:** 28% (done + 0.4×partial)
+- **So'nggi bajarilgan ishlar:** Mobil pastki navigatsiya qo'shildi (`components/layout/bottom-nav.tsx` + umumiy `nav-items.ts`), desktop sidebar `md:flex` bilan faqat kattaroq ekranlarda ko'rinadi, `app/(app)/layout.tsx` `h-dvh`ga o'tdi; Maqsadlar/Vazifalar/AI/Kun sahifalarining grid va header'lari responsive qilindi (375px'da gorizontal toshib ketish yo'q); Telegram Mini App ichida ochilganda ishlashi uchun root layout Telegram WebApp SDK skriptini yuklaydi.
+- **Keyingi qadam:** Dark rejim tokenlari va toggle qo'shish; Dashboard/Kalendar/Sozlamalar ekranlari uchun maket yaratish; qolgan komponentlarni (Modal/Dialog umumiy, Select, Toast, empty/loading holatlari) qo'shish; haqiqiy Telegram qurilmasida mobil ko'rinishni tekshirish.

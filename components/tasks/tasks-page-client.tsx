@@ -30,7 +30,7 @@ export function TasksPageClient() {
 
   return (
     <>
-      <div className="mb-7 flex items-end justify-between gap-4">
+      <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="mb-1 text-[26px] font-bold tracking-[var(--tracking-tight)] text-[var(--color-text)]">
             Vazifalar

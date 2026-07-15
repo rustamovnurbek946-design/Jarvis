@@ -44,7 +44,7 @@ export function GoalsPageClient({ initialGoals }: { initialGoals: GoalItem[] }) 
 
   return (
     <>
-      <div className="mb-7 flex items-end justify-between gap-4">
+      <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="mb-1 text-[26px] font-bold tracking-[var(--tracking-tight)] text-[var(--color-text)]">
             Maqsadlar
@@ -58,7 +58,7 @@ export function GoalsPageClient({ initialGoals }: { initialGoals: GoalItem[] }) 
         </Button>
       </div>
 
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-5">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(340px,100%),1fr))] gap-5">
         {goals.map((g) => (
           <GoalCard key={g.id} goal={g} onEdit={setModal} onDelete={handleDelete} />
         ))}

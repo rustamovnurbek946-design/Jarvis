@@ -15,7 +15,7 @@ export default function AiPage() {
         </div>
       </div>
 
-      <div className="mb-6 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+      <div className="mb-6 grid grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))] gap-4">
         {AI_STATS.map((s) => (
           <AiStatCard key={s.label} {...s} />
         ))}

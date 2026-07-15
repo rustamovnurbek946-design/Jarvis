@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-07-15T18:00:00+05:00",
-  "overallPercent": 27,
-  "summary": "Sprint 2 va Sprint 3 haqiqiy kod holatiga moslab qayta baholandi: Telegram endi asosiy login usuli (Credentials provider, JWT sessiya, deep-link login-token, himoyalangan layout, demo-user olib tashlandi), Bilim bazasi sahifasi va Telegram AI chat (Gemini) qo'shildi, bot.ts /kun buyrug'i bilan qayta yozildi.",
+  "timestamp": "2026-07-15T14:44:35.992Z",
+  "overallPercent": 32,
+  "summary": "Web ilova Telegram Mini App sifatida ham ishlaydigan qilindi (initData HMAC tekshiruvi + Credentials(\"telegram-miniapp\") auto-login, /app buyrug'i, menyu tugmasi) va desktop/mobil responsive shell (sidebar<->bottom-nav) qo'shildi; sprint fayllari, CLAUDE.md qarorlar jurnali va dashboard.html shu holatga moslab yangilandi.",
   "sprintStatuses": {
-    "1": "progress (25%)",
+    "1": "progress (28%)",
     "2": "progress (46%)",
-    "3": "progress (31%)",
-    "4": "todo (0%)"
+    "3": "progress (44%)",
+    "4": "partial (1%)"
   }
 }
