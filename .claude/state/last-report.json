@@ -1,11 +1,12 @@
 {
-  "timestamp": "2026-07-15T14:44:35.992Z",
-  "overallPercent": 32,
-  "summary": "Web ilova Telegram Mini App sifatida ham ishlaydigan qilindi (initData HMAC tekshiruvi + Credentials(\"telegram-miniapp\") auto-login, /app buyrug'i, menyu tugmasi) va desktop/mobil responsive shell (sidebar<->bottom-nav) qo'shildi; sprint fayllari, CLAUDE.md qarorlar jurnali va dashboard.html shu holatga moslab yangilandi.",
+  "timestamp": "2026-07-15T15:29:37.000Z",
+  "overallPercent": 47,
+  "summary": "Sprint 5 (ovozli xabardan maqsad qo'shish) qo'shildi: voiceGoalDrafts jadvali va migratsiya real Neon bazasiga qo'llandi, lib/ai/audioGoal.ts (transcribeVoice + extractGoalDraft, Gemini API'ga qarshi tasdiqlangan) va lib/telegram/downloadVoiceFile.ts yaratildi, bot.ts'ga message:voice handler va tasdiqlash/bekor qilish callback'lari, messages.ts'ga 3 tilda matnlar qo'shildi; haqiqiy Telegram orqali E2E test hali kutilmoqda.",
   "sprintStatuses": {
-    "1": "progress (28%)",
-    "2": "progress (46%)",
-    "3": "progress (44%)",
-    "4": "partial (1%)"
+    "1": "progress (39%)",
+    "2": "progress (62%)",
+    "3": "progress (54%)",
+    "4": "partial (3%)",
+    "5": "partial (60%)"
   }
 }

@@ -146,3 +146,17 @@ uchun): `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `ALLOWED_EMAILS`. Namuna:
   (`lib/telegram/miniapp-url.ts`) — root sahifadagi auth-redirect sakrashi
   ba'zi Telegram klientlarida imzolangan `#tgWebAppData=...` fragmentini
   yo'qotib, auto-login'ni sindirib qo'ygani real qurilmada aniqlandi.
+- [2026-07-15] Yangi funksiya qo'shildi: Telegram ovozli xabar → Gemini audio
+  kirishi orqali transkript → maqsad (goal) qoralamasi (`voiceGoalDrafts`
+  jadvali, `lib/ai/audioGoal.ts`) — darhol saqlash o'rniga **tasdiqlash oqimi**
+  tanlandi (✅/❌ inline tugma), chunki noto'g'ri eshitilgan ovoz to'g'ridan-
+  to'g'ri bazaga yozilib qolmasligi kerak; draft 15 daqiqadan keyin eskiradi
+  (`telegramLoginTokens` bilan bir xil bir martalik/muddatli naqsh).
+- [2026-07-15] Ovozni matnga o'girish uchun alohida speech-to-text provayder
+  (masalan Whisper) qo'shilmadi — mavjud **Gemini** (`GEMINI_MODEL`) audio
+  faylni (`audio/ogg`) message content sifatida to'g'ridan-to'g'ri qabul
+  qiladi (Vercel AI SDK `{ type: "file", mediaType, data }`), shuning uchun
+  yangi muhit o'zgaruvchisi yoki integratsiya kerak bo'lmadi.
+- [2026-07-15] Ovozli xabar davomiyligi **max 120 soniya** bilan cheklandi —
+  undan uzunini bot yuklab olmasdanoq rad etadi (Gemini xarajati/javob
+  vaqtini nazorat qilish uchun).

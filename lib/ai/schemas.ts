@@ -54,3 +54,40 @@ export const planResultSchema = z.object({
 
 export type PlanResult = z.infer<typeof planResultSchema>;
 export type GeneratedTask = z.infer<typeof generatedTaskSchema>;
+
+// Goal fields extracted from a transcribed Telegram voice message.
+// Shape mirrors lib/db/schema.ts's GoalDraft type.
+export const goalDraftSchema = z.object({
+  title: z.string().describe("Short, clear goal title in the user's language"),
+  description: z
+    .string()
+    .nullable()
+    .optional()
+    .describe("Extra detail from the transcript, or null if none"),
+  type: z
+    .enum(["yearly", "quarterly"])
+    .describe(
+      "'yearly' unless the transcript clearly refers to a specific quarter/chorak",
+    ),
+  year: z.number().int().describe("Calendar year the goal belongs to"),
+  quarter: z
+    .number()
+    .int()
+    .min(1)
+    .max(4)
+    .nullable()
+    .optional()
+    .describe("1-4, only when type is 'quarterly', otherwise null"),
+  domain: z
+    .string()
+    .nullable()
+    .optional()
+    .describe("Free-text life domain tag, e.g. 'Sog'liq', 'Biznes', or null if unclear"),
+  targetMetric: z
+    .string()
+    .nullable()
+    .optional()
+    .describe("How success is measured, if mentioned, otherwise null"),
+});
+
+export type GoalDraftAI = z.infer<typeof goalDraftSchema>;

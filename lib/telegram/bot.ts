@@ -4,15 +4,26 @@ import { db } from "@/lib/db";
 import {
   users,
   tasks as tasksTable,
+  goals as goalsTable,
   dailyLogs,
   telegramLoginTokens,
+  voiceGoalDrafts,
+  type GoalDraft,
 } from "@/lib/db/schema";
 import { botT } from "./messages";
 import { isAllowedTelegramUsername } from "./allowlist";
 import { getMiniAppUrl } from "./miniapp-url";
+import { downloadVoiceFile, VoiceTooLongError } from "./downloadVoiceFile";
 import { todayISO } from "@/lib/date";
 import { generatePlanForUser } from "@/lib/ai/generatePlan";
 import { answerUserQuestion } from "@/lib/ai/chat";
+import {
+  transcribeVoice,
+  extractGoalDraft,
+  EmptyTranscriptError,
+} from "@/lib/ai/audioGoal";
+
+const VOICE_DRAFT_TTL_MS = 15 * 60 * 1000;
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 if (!token) {
@@ -180,6 +191,145 @@ function registerHandlers(bot: Bot) {
         .values({ userId: user.id, date: day, freeText: logText });
     }
     await ctx.reply(t.logSaved);
+  });
+
+  function formatGoalDraft(t: ReturnType<typeof botT>, draft: GoalDraft): string {
+    let text = `${t.voiceDraftTitle}\n📌 ${draft.title}\n`;
+    if (draft.description) text += `${draft.description}\n`;
+    text += `${t.voiceFieldType}: ${draft.type === "quarterly" ? t.voiceTypeQuarterly : t.voiceTypeYearly}\n`;
+    text += `${t.voiceFieldYear}: ${draft.year}\n`;
+    if (draft.type === "quarterly" && draft.quarter) {
+      text += `${t.voiceFieldQuarter}: Q${draft.quarter}\n`;
+    }
+    if (draft.domain) text += `${t.voiceFieldDomain}: ${draft.domain}\n`;
+    if (draft.targetMetric) text += `${t.voiceFieldTarget}: ${draft.targetMetric}\n`;
+    return text;
+  }
+
+  // Voice message → transcribe (Gemini audio input) → extract goal fields →
+  // store as a pending draft → ask the user to confirm before writing to DB.
+  bot.on("message:voice", async (ctx) => {
+    const user = await findUserByChat(String(ctx.chat.id));
+    if (!user) return ctx.reply(botT("uz").notLinked);
+    const t = botT(user.locale);
+
+    try {
+      await ctx.replyWithChatAction("record_voice");
+      const audio = await downloadVoiceFile(ctx);
+      await ctx.reply(t.voiceListening);
+      await ctx.replyWithChatAction("typing");
+
+      const transcript = await transcribeVoice(audio);
+      const draftGoal = await extractGoalDraft(transcript, user);
+
+      const [row] = await db
+        .insert(voiceGoalDrafts)
+        .values({
+          userId: user.id,
+          transcript,
+          draftGoal,
+          expiresAt: new Date(Date.now() + VOICE_DRAFT_TTL_MS),
+        })
+        .returning();
+
+      const kb = new InlineKeyboard()
+        .text(t.confirmButton, `vgc:${row.id}`)
+        .text(t.cancelButton, `vgx:${row.id}`);
+
+      const text = `${t.voiceHeard} "${transcript}"\n\n${formatGoalDraft(t, draftGoal)}`;
+      await ctx.reply(text, { reply_markup: kb });
+    } catch (err) {
+      if (err instanceof VoiceTooLongError) {
+        return ctx.reply(t.voiceTooLong);
+      }
+      if (err instanceof EmptyTranscriptError) {
+        return ctx.reply(t.voiceUnclear);
+      }
+      console.error("voice-to-goal failed", err);
+      await ctx.reply(t.voiceError);
+    }
+  });
+
+  // Confirm: write the pending draft into `goals`.
+  bot.callbackQuery(/^vgc:(.+)$/, async (ctx) => {
+    const user = await findUserByChat(String(ctx.chat?.id));
+    const draftId = ctx.match![1];
+    if (!user) return ctx.answerCallbackQuery();
+    const t = botT(user.locale);
+
+    const [row] = await db
+      .select()
+      .from(voiceGoalDrafts)
+      .where(
+        and(
+          eq(voiceGoalDrafts.id, draftId),
+          eq(voiceGoalDrafts.userId, user.id),
+          eq(voiceGoalDrafts.status, "pending"),
+          gt(voiceGoalDrafts.expiresAt, new Date()),
+        ),
+      )
+      .limit(1);
+
+    if (!row) {
+      await ctx.answerCallbackQuery({ text: t.voiceDraftExpired });
+      return;
+    }
+
+    const draft = row.draftGoal;
+    await db.insert(goalsTable).values({
+      userId: user.id,
+      title: draft.title,
+      description: draft.description,
+      type: draft.type,
+      year: draft.year,
+      quarter: draft.quarter,
+      domain: draft.domain,
+      targetMetric: draft.targetMetric,
+    });
+    await db
+      .update(voiceGoalDrafts)
+      .set({ status: "confirmed" })
+      .where(eq(voiceGoalDrafts.id, draftId));
+
+    await ctx.answerCallbackQuery({ text: t.goalAddedFromVoice });
+    try {
+      await ctx.editMessageReplyMarkup();
+    } catch {
+      // message may be too old to edit — non-fatal
+    }
+  });
+
+  // Cancel: mark the draft cancelled without touching `goals`.
+  bot.callbackQuery(/^vgx:(.+)$/, async (ctx) => {
+    const user = await findUserByChat(String(ctx.chat?.id));
+    const draftId = ctx.match![1];
+    if (!user) return ctx.answerCallbackQuery();
+    const t = botT(user.locale);
+
+    const result = await db
+      .update(voiceGoalDrafts)
+      .set({ status: "cancelled" })
+      .where(
+        and(
+          eq(voiceGoalDrafts.id, draftId),
+          eq(voiceGoalDrafts.userId, user.id),
+          eq(voiceGoalDrafts.status, "pending"),
+          gt(voiceGoalDrafts.expiresAt, new Date()),
+        ),
+      )
+      .returning();
+
+    if (result.length === 0) {
+      await ctx.answerCallbackQuery({ text: t.voiceDraftExpired });
+      return;
+    }
+
+    await ctx.answerCallbackQuery({ text: t.voiceCancelled });
+    try {
+      await ctx.editMessageReplyMarkup();
+    } catch {
+      // message may be too old to edit — non-fatal
+    }
   });
 
   // Toggle a task done from inline buttons

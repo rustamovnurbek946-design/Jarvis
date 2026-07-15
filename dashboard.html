@@ -263,6 +263,30 @@ const SPRINTS = [
       ]},
     ]
   },
+  {
+    n:5, title:"Ovozli xabardan maqsad qo'shish", status:"partial",
+    desc:"Telegram ovozli xabarni Gemini audio kirishi orqali matnga o'girib, maqsad qoralamasini ajratib oladi va tasdiqlash tugmalari bilan `goals`ga qo'shadi.",
+    groups:[
+      {g:"Baza", items:[
+        ["x","voiceGoalDrafts jadvali + GoalDraft tipi (lib/db/schema.ts)"],
+        ["x","Migratsiya (0003_tricky_whiplash.sql) real Neon bazaga qo'llandi"],
+      ]},
+      {g:"Ovoz va AI", items:[
+        ["p","downloadVoiceFile.ts (davomiylik tekshiruvi + yuklab olish) — kod tayyor, real voice fayl bilan sinovdan o'tmagan"],
+        ["p","transcribeVoice — kod tayyor, haqiqiy audio fayl bilan sinovdan o'tmagan"],
+        ["x","extractGoalDraft + goalDraftSchema — haqiqiy Gemini API'ga qarshi 2 holatda tasdiqlangan"],
+      ]},
+      {g:"Bot integratsiyasi", items:[
+        ["p","message:voice handler (transkript + draft + inline tugmalar) — kod tayyor, real Telegramda sinovdan o'tmagan"],
+        ["p","vgc:/vgx: tasdiqlash/bekor qilish callback'lari — kod tayyor, real sinovdan o'tmagan"],
+        ["x","3 tilda matnlar (messages.ts)"],
+        ["p","Xatolik holatlari (voiceError/notLinked) — kod tayyor, real sinovdan o'tmagan"],
+      ]},
+      {g:"Yakuniy tekshiruv", items:[
+        ["o","Haqiqiy Telegram qurilmasida to'liq E2E (ovoz → transkript → tasdiqlash → DB → UI)"],
+      ]},
+    ]
+  },
 ];
 
 const STATUS_LABEL = {done:"Bajarilgan",progress:"Jarayonda",partial:"Qisman",todo:"Rejalashtirilgan"};
@@ -322,10 +346,10 @@ document.getElementById('bigfill').style.width = overall+'%';
 document.getElementById('bigpct').textContent = overall+'%';
 
 const stats = [
-  ['4','Sprintlar'],
-  [doneSprints+'/4','Tugallangan sprint'],
+  [String(SPRINTS.length),'Sprintlar'],
+  [doneSprints+'/'+SPRINTS.length,'Tugallangan sprint'],
   [overall+'%','Umumiy progress'],
-  [SPRINTS.filter(s=>s.status!=='todo').length+'/4','Boshlangan'],
+  [SPRINTS.filter(s=>s.status!=='todo').length+'/'+SPRINTS.length,'Boshlangan'],
 ];
 document.getElementById('stats').innerHTML = stats.map(([n,l])=>`
   <div class="stat"><div class="num">${n}</div><div class="lbl">${l}</div></div>`).join('');

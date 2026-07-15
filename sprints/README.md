@@ -10,6 +10,7 @@ ichida batafsil vazifalar ro'yxati (checklist) va "tayyor" mezoni bor.
 | 2 | MVP (dizayn bo'yicha) | [sprint-2-mvp-tayyorlash.md](sprint-2-mvp-tayyorlash.md) | Maqsad + reja yadrosi, AI generatsiya |
 | 3 | Calendar + Telegram | [sprint-3-calendar-telegram.md](sprint-3-calendar-telegram.md) | Google Calendar, Telegram bot, cron |
 | 4 | Test + Prod | [sprint-4-test-prod.md](sprint-4-test-prod.md) | Testlash, sayqallash, Vercelga chiqarish |
+| 5 | Ovozli maqsad | [sprint-5-ovozli-maqsad.md](sprint-5-ovozli-maqsad.md) | Telegram ovozli xabar → Gemini audio → maqsad qo'shish |
 
 ## Asosiy qarorlar (intervyudan)
 

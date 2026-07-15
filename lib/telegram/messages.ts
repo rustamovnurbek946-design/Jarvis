@@ -17,6 +17,24 @@ type BotStrings = {
   chatError: string;
   openAppButton: string;
   openAppMessage: string;
+  voiceListening: string;
+  voiceTooLong: string;
+  voiceUnclear: string;
+  voiceError: string;
+  voiceHeard: string;
+  voiceDraftTitle: string;
+  voiceFieldType: string;
+  voiceFieldYear: string;
+  voiceFieldQuarter: string;
+  voiceFieldDomain: string;
+  voiceFieldTarget: string;
+  voiceTypeYearly: string;
+  voiceTypeQuarterly: string;
+  confirmButton: string;
+  cancelButton: string;
+  goalAddedFromVoice: string;
+  voiceCancelled: string;
+  voiceDraftExpired: string;
 };
 
 const STRINGS: Record<Locale, BotStrings> = {
@@ -42,6 +60,26 @@ const STRINGS: Record<Locale, BotStrings> = {
     chatError: "⚠️ Javob berishda xatolik yuz berdi. Birozdan keyin qayta urinib ko'ring.",
     openAppButton: "📱 Ilovani ochish",
     openAppMessage: "Ilovani to'g'ridan-to'g'ri shu yerda ochish uchun tugmani bosing:",
+    voiceListening: "🎙 Ovozli xabaringizni tinglayapman...",
+    voiceTooLong:
+      "⚠️ Ovozli xabar juda uzun (max 120 soniya). Iltimos, qisqaroq qilib qayta yuboring.",
+    voiceUnclear:
+      "🤔 Ovozli xabarni tushuna olmadim. Iltimos, aniqroq va tushunarli qilib qayta yuboring.",
+    voiceError: "⚠️ Ovozli xabarni qayta ishlashda xatolik yuz berdi. Qayta urinib ko'ring.",
+    voiceHeard: "🎙 Eshitganim:",
+    voiceDraftTitle: "Taklif qilingan maqsad:",
+    voiceFieldType: "Turi",
+    voiceFieldYear: "Yil",
+    voiceFieldQuarter: "Chorak",
+    voiceFieldDomain: "Soha",
+    voiceFieldTarget: "Natija mezoni",
+    voiceTypeYearly: "Yillik",
+    voiceTypeQuarterly: "Chorak",
+    confirmButton: "✅ Qo'shish",
+    cancelButton: "❌ Bekor qilish",
+    goalAddedFromVoice: "✅ Maqsad qo'shildi! Bosh sahifada ko'rishingiz mumkin.",
+    voiceCancelled: "Bekor qilindi, hech narsa saqlanmadi.",
+    voiceDraftExpired: "Bu taklif eskirgan yoki allaqachon hal qilingan.",
   },
   ru: {
     start:
@@ -64,6 +102,26 @@ const STRINGS: Record<Locale, BotStrings> = {
     chatError: "⚠️ Ошибка при ответе. Попробуйте ещё раз чуть позже.",
     openAppButton: "📱 Открыть приложение",
     openAppMessage: "Нажмите кнопку, чтобы открыть приложение прямо здесь:",
+    voiceListening: "🎙 Слушаю ваше голосовое сообщение...",
+    voiceTooLong:
+      "⚠️ Голосовое сообщение слишком длинное (макс. 120 секунд). Отправьте покороче.",
+    voiceUnclear:
+      "🤔 Не удалось понять голосовое сообщение. Отправьте, пожалуйста, чётче и яснее.",
+    voiceError: "⚠️ Ошибка при обработке голосового сообщения. Попробуйте ещё раз.",
+    voiceHeard: "🎙 Я услышал:",
+    voiceDraftTitle: "Предложенная цель:",
+    voiceFieldType: "Тип",
+    voiceFieldYear: "Год",
+    voiceFieldQuarter: "Квартал",
+    voiceFieldDomain: "Сфера",
+    voiceFieldTarget: "Критерий результата",
+    voiceTypeYearly: "Годовая",
+    voiceTypeQuarterly: "Квартальная",
+    confirmButton: "✅ Добавить",
+    cancelButton: "❌ Отменить",
+    goalAddedFromVoice: "✅ Цель добавлена! Посмотрите на главной странице.",
+    voiceCancelled: "Отменено, ничего не сохранено.",
+    voiceDraftExpired: "Это предложение устарело или уже обработано.",
   },
   en: {
     start:
@@ -84,6 +142,26 @@ const STRINGS: Record<Locale, BotStrings> = {
     chatError: "⚠️ Something went wrong answering that. Please try again shortly.",
     openAppButton: "📱 Open app",
     openAppMessage: "Tap the button to open the app right here:",
+    voiceListening: "🎙 Listening to your voice message...",
+    voiceTooLong:
+      "⚠️ Voice message is too long (max 120 seconds). Please send a shorter one.",
+    voiceUnclear:
+      "🤔 Couldn't understand the voice message. Please send a clearer one.",
+    voiceError: "⚠️ Something went wrong processing that voice message. Please try again.",
+    voiceHeard: "🎙 I heard:",
+    voiceDraftTitle: "Suggested goal:",
+    voiceFieldType: "Type",
+    voiceFieldYear: "Year",
+    voiceFieldQuarter: "Quarter",
+    voiceFieldDomain: "Domain",
+    voiceFieldTarget: "Success metric",
+    voiceTypeYearly: "Yearly",
+    voiceTypeQuarterly: "Quarterly",
+    confirmButton: "✅ Add",
+    cancelButton: "❌ Cancel",
+    goalAddedFromVoice: "✅ Goal added! Check it out on the home page.",
+    voiceCancelled: "Cancelled, nothing was saved.",
+    voiceDraftExpired: "This suggestion has expired or was already handled.",
   },
 };
 

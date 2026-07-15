@@ -25,6 +25,11 @@ export const notificationTypeEnum = pgEnum("notification_type", [
   "weekly",
   "task",
 ]);
+export const voiceGoalDraftStatusEnum = pgEnum("voice_goal_draft_status", [
+  "pending",
+  "confirmed",
+  "cancelled",
+]);
 
 // ---------- Auth.js (NextAuth) tables ----------
 export const users = pgTable("user", {
@@ -170,6 +175,25 @@ export const dailyLogs = pgTable(
   (t) => [uniqueIndex("daily_logs_user_date_idx").on(t.userId, t.date)],
 );
 
+// One-time draft created when the user sends a Telegram voice message meant
+// to become a goal: Gemini transcribes the audio and extracts goal fields,
+// the bot shows a preview, and the user confirms/cancels via inline buttons
+// (see lib/ai/audioGoal.ts, lib/telegram/bot.ts). Same disposable-row pattern
+// as telegramLoginTokens.
+export const voiceGoalDrafts = pgTable("voice_goal_drafts", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  transcript: text("transcript").notNull(),
+  draftGoal: jsonb("draft_goal").notNull().$type<GoalDraft>(),
+  status: voiceGoalDraftStatusEnum("status").notNull().default("pending"),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
+});
+
 export const notifications = pgTable("notifications", {
   id: text("id")
     .primaryKey()
@@ -221,6 +245,18 @@ export type DailyAnalysis = {
   };
 };
 
+// Goal fields extracted by Gemini from a transcribed voice message, pending
+// user confirmation. Mirrors (a subset of) the `goals` table columns.
+export type GoalDraft = {
+  title: string;
+  description: string | null;
+  type: "yearly" | "quarterly";
+  year: number;
+  quarter: number | null; // 1-4, only when type === "quarterly"
+  domain: string | null;
+  targetMetric: string | null;
+};
+
 export type User = typeof users.$inferSelect;
 export type TelegramLoginToken = typeof telegramLoginTokens.$inferSelect;
 export type Goal = typeof goals.$inferSelect;
@@ -228,3 +264,4 @@ export type NewGoal = typeof goals.$inferInsert;
 export type Task = typeof tasks.$inferSelect;
 export type NewTask = typeof tasks.$inferInsert;
 export type DailyLog = typeof dailyLogs.$inferSelect;
+export type VoiceGoalDraft = typeof voiceGoalDrafts.$inferSelect;
